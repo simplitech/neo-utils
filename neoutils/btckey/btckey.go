@@ -554,6 +554,44 @@ func (pub *PublicKey) ToNeoAddress() (address string) {
 }
 
 // ToAddress converts a Bitcoin public key to a compressed Bitcoin address string.
+func (pub *PublicKey) ToNeo3Address() (address string) {
+	/* See https://en.bitcoin.it/wiki/Technical_background_of_Bitcoin_addresses */
+
+	/* Convert the public key to bytes */
+	pub_bytes := pub.ToBytes()
+
+	pub_bytes = append([]byte{0x21}, pub_bytes...)
+	pub_bytes = append(pub_bytes, 0xAC)
+
+	/* SHA256 Hash */
+	sha256_h := sha256.New()
+	sha256_h.Reset()
+	sha256_h.Write(pub_bytes)
+	pub_hash_1 := sha256_h.Sum(nil)
+
+	/* RIPEMD-160 Hash */
+	ripemd160_h := ripemd160.New()
+	ripemd160_h.Reset()
+	ripemd160_h.Write(pub_hash_1)
+	pub_hash_2 := ripemd160_h.Sum(nil)
+
+	program_hash := pub_hash_2
+
+	//wallet version
+	//program_hash = append([]byte{0x17}, program_hash...)
+
+	// doublesha := sha256Bytes(sha256Bytes(program_hash))
+
+	// checksum := doublesha[0:4]
+
+	// result := append(program_hash, checksum...)
+	/* Convert hash bytes to base58 check encoded sequence */
+	address = B58checkencodeNEO(0x35, program_hash)
+
+	return address
+}
+
+// ToAddress converts a Bitcoin public key to a compressed Bitcoin address string.
 func (pub *PublicKey) ToAddress() (address string) {
 	/* See https://en.bitcoin.it/wiki/Technical_background_of_Bitcoin_addresses */
 

@@ -561,7 +561,12 @@ func (pub *PublicKey) ToNeo3Address() (address string) {
 	pub_bytes := pub.ToBytes()
 
 	pub_bytes = append([]byte{0x21}, pub_bytes...)
-	pub_bytes = append(pub_bytes, 0xAC)
+	pub_bytes = append([]byte{0x0C}, pub_bytes...)
+	pub_bytes = append(pub_bytes, 0x41)
+	pub_bytes = append(pub_bytes, 0x56)
+	pub_bytes = append(pub_bytes, 0xe7)
+	pub_bytes = append(pub_bytes, 0xb3)
+	pub_bytes = append(pub_bytes, 0x27)
 
 	/* SHA256 Hash */
 	sha256_h := sha256.New()
